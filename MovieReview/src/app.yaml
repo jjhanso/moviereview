@@ -1,0 +1,22 @@
+application: mymoviereviews
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /stylesheets
+  static_dir: stylesheets
+  
+- url: /js
+  static_dir: js
+  
+- url: /img
+  static_dir: img
+  
+- url: /.*
+  script: movies.app
+  
+libraries:
+- name: jinja2
+  version: latest

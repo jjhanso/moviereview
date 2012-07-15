@@ -1,0 +1,51 @@
+body {
+  font-family: Verdana, Helvetica, sans-serif;
+  background-color: #DDDDDD;
+}
+
+#header {
+}
+
+#menu {
+  clear:both;
+  background-color:#CCCCCC;
+  width:28%;
+  margin-right:2%;
+  float:left;
+}
+
+#content {
+  background-color:#EEEEEE;
+  width:70%;
+  float:left;
+  ;
+}
+
+#footer {
+  clear:both;
+  width:100%;
+}
+
+.disclaimer {
+  border-style:solid;
+  border-color:#FF0000;
+  border-width:1px;
+  padding:2px;
+  margin:20px;
+  text-align:center;
+  background-color:#FF9999;
+  font-weight:bold;
+}
+
+.review {
+  background-color:#CCCCCC;
+}
+
+.movie_info { 
+}
+
+label {
+  width:20%; 
+  float: left;   
+  font-weight: bold;
+}
