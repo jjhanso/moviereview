@@ -57,8 +57,8 @@ class MainPage(webapp2.RequestHandler):
         # I guess I could have easily done this with javascript as well, 
         # but I'm figuring this is more about learning python)
         if movie is None and movie_title is not None:
-            json = get_imdb_json(title = movie_title)
             try:
+                json = get_imdb_json(title = movie_title)
                 title_guess = json['Title']
                 genre_guess = json['Genre']
                 desc_guess = json['Plot']
