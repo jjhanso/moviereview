@@ -5,7 +5,7 @@ import os
 import jinja2
 import urllib
 import urllib2
-import simplejson 
+import json 
 
 jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -14,7 +14,7 @@ jinja_environment = jinja2.Environment(
 def get_imdb_json(title):
     url = 'http://www.imdbapi.com/?t=%s' % title.strip().replace(' ', '%20')   
     content = urllib2.urlopen(url).read()
-    return simplejson.loads(content)
+    return json.loads(content)
     
 class Movie(db.Model):
     """Models an individual Movie entry"""
@@ -58,10 +58,10 @@ class MainPage(webapp2.RequestHandler):
         # but I'm figuring this is more about learning python)
         if movie is None and movie_title is not None:
             try:
-                json = get_imdb_json(title = movie_title)
-                title_guess = json['Title']
-                genre_guess = json['Genre']
-                desc_guess = json['Plot']
+                jsonData = get_imdb_json(title = movie_title)
+                title_guess = jsonData['Title']
+                genre_guess = jsonData['Genre']
+                desc_guess = jsonData['Plot']
                 #try getting movie again, with guessed title?
                 movie_k = db.Key.from_path('Movie', title_guess)
                 movie = db.get(movie_k)
