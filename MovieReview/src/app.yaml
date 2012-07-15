@@ -15,7 +15,7 @@ handlers:
   static_dir: img
   
 - url: /.*
-  script: movies.app
+  script: main.app
   
 libraries:
 - name: jinja2

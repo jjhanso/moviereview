@@ -1,35 +1,20 @@
 from google.appengine.api import users
-from google.appengine.ext import db
+
+#import Movie and Review models
+from models.models import *
 import webapp2
 import os
 import jinja2
 import urllib
 import urllib2
 import json 
+import logging
 
 jinja_environment = jinja2.Environment(
-    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
+    loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), os.path.pardir, 'templates')))
 
 
-def get_imdb_json(title):
-    url = 'http://www.imdbapi.com/?t=%s' % title.strip().replace(' ', '%20')   
-    content = urllib2.urlopen(url).read()
-    return json.loads(content)
     
-class Movie(db.Model):
-    """Models an individual Movie entry"""
-    title = db.StringProperty()
-    genre = db.StringProperty()
-    description = db.StringProperty(multiline=True)
-    #review = db.ReferenceProperty(Review, collection_name='reviews')
-    
-class Review(db.Model):
-    """ Models a review for a movie """
-    movie = db.ReferenceProperty(Movie, collection_name='reviews')
-    user = db.StringProperty()
-    date = db.DateTimeProperty(auto_now_add=True)
-    rating = db.RatingProperty()
-    details = db.StringProperty(multiline=True)
     
 class MainPage(webapp2.RequestHandler):
      
@@ -81,7 +66,8 @@ class MainPage(webapp2.RequestHandler):
             'desc_guess': desc_guess
         }
 
-        template = jinja_environment.get_template('main.html')
+        logging.info('JeremY!!!!!! - ' + (os.path.join(os.path.dirname(__file__), '../views')))
+        template = jinja_environment.get_template('index.html')
         self.response.out.write(template.render(template_values))
 
             
@@ -119,9 +105,14 @@ class MovieInfo(webapp2.RequestHandler):
             
         self.redirect('/?' + urllib.urlencode({'movie_title': movie_title}))
 
+# Method to go out and grab movie information if the movie searched for does not exist in our data store
+def get_imdb_json(title):
+    url = 'http://www.imdbapi.com/?t=%s' % title.strip().replace(' ', '%20')   
+    content = urllib2.urlopen(url).read()
+    return json.loads(content)
 
-app = webapp2.WSGIApplication([('/', MainPage), 
-                              ('/addreview', MovieReview),
-                              ('/addmovie', MovieInfo)], debug=True)
+#app = webapp2.WSGIApplication([('/', MainPage), 
+#                              ('/addreview', MovieReview),
+#                              ('/addmovie', MovieInfo)], debug=True)
 
 
