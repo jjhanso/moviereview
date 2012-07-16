@@ -16,8 +16,7 @@ jinja_environment = jinja2.Environment(
 
     
     
-class MainPage(webapp2.RequestHandler):
-     
+class MainPage(webapp2.RequestHandler):      
     def get(self):
 
         if users.get_current_user():
@@ -39,8 +38,8 @@ class MainPage(webapp2.RequestHandler):
         title_guess = ''
         genre_guess = ''
         desc_guess = ''     
-        # I guess I could have easily done this with javascript as well, 
-        # but I'm figuring this is more about learning python)
+        # I guess I could have easily done this with jQuery as well on the client side, 
+        # but I'm figuring this is more about learning python 
         if movie is None and movie_title is not None:
             try:
                 jsonData = get_imdb_json(title = movie_title)
@@ -58,7 +57,6 @@ class MainPage(webapp2.RequestHandler):
         template_values = {
             'movie': movie,
             'title': movie_title,
-            'logout_url': users.create_logout_url("/"),
             'user_url': user_url,
             'user_url_label': url_linktext,
             'title_guess': title_guess,
@@ -66,7 +64,6 @@ class MainPage(webapp2.RequestHandler):
             'desc_guess': desc_guess
         }
 
-        logging.info('JeremY!!!!!! - ' + (os.path.join(os.path.dirname(__file__), '../views')))
         template = jinja_environment.get_template('index.html')
         self.response.out.write(template.render(template_values))
 
@@ -105,14 +102,48 @@ class MovieInfo(webapp2.RequestHandler):
             
         self.redirect('/?' + urllib.urlencode({'movie_title': movie_title}))
 
+class AllMovies(webapp2.RequestHandler):
+    def get(self):
+        #code duplification... should put in function.
+        if users.get_current_user():
+            user_url = users.create_logout_url(self.request.uri)
+            url_linktext = 'Logout'
+        else:
+            user_url = users.create_login_url(self.request.uri)
+            url_linktext = 'Login'
+        
+        last_cursor = self.request.get('cursor')
+        #if not last_cursor:
+        #    last_cursor = '-1'
+            
+        try:
+            movies_to_return = int(self.request.get('results'))
+        except ValueError:
+            movies_to_return = 2
+            
+        movie_query = Movie.all().order('title')
+        if last_cursor:
+            movie_query.with_cursor(last_cursor)
+        movies = movie_query.fetch(movies_to_return)
+        cursor = movie_query.cursor()
+        #prev_cursor = int(cursor) - movies_to_return
+        
+        template_values = {
+            'movies': movies,
+            'user_url': user_url,
+            'user_url_label': url_linktext,
+            'next_cursor': cursor 
+            #'prev_cursor': prev_cursor
+        }
+        template = jinja_environment.get_template('browse.html')
+        self.response.out.write(template.render(template_values))
+        
+    
 # Method to go out and grab movie information if the movie searched for does not exist in our data store
 def get_imdb_json(title):
     url = 'http://www.imdbapi.com/?t=%s' % title.strip().replace(' ', '%20')   
     content = urllib2.urlopen(url).read()
     return json.loads(content)
 
-#app = webapp2.WSGIApplication([('/', MainPage), 
-#                              ('/addreview', MovieReview),
-#                              ('/addmovie', MovieInfo)], debug=True)
 
 

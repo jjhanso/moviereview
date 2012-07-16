@@ -47,9 +47,12 @@
       </form>
  	{% else %}
  	  <form action="/addmovie" method="post">
- 		<div class="disclaimer">Movie not found in database.  Please add.<br /> 
+ 	    {% if movie_title %}
+ 		  <div class="disclaimer">Movie not found in database.  Please add.<br /> 
  			<span style="font-size:small">Note: Note, movie contents may be pre-filled below with imdb's best guess for your search terms</span> 
- 		</div>
+ 		  </div>
+ 		{% endif %}
+ 		
  		<div class="field">
  		    <label for="add_title">Title: </label>
  			<input type="text" id="add_title" name="movie_title" value="{{ title_guess }}" />

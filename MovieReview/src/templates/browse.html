@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Movie{% endblock %}
+
+{% block content %}    
+	{% for movie in movies %}
+      <a href="/?movie_title=?{{ movie.title }}">{{ movie.title }}</a> - {{ movie.genre }} <br />
+      {% for review in movie.reviews %}
+      	{{ review.user }} - {{ review.date.date() }} - {{ review.rating }} <br />
+      	{{ review.details|escape }} <br /><br />
+      {% endfor %} 
+      <hr /> 
+    {% endfor %}
+    
+    
+    <a href="/browse?cursor={{ next_cursor }}">next</a>
+{% endblock %}
+
+{% block jquery %}
+    
+    <script type="text/javascript">
+			$(function() {
+				$('.existing-rating').raty({
+					readOnly   : true,
+					score      : function() {
+					  		       return $(this).attr('data-rating');
+					             },
+					width       : 150
+				});	
+			});
+	</script>
+{% endblock %}
